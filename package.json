@@ -1,5 +1,5 @@
 {
-  "name": "gulp template for myself",
+  "name": "gulp_template_for_myself",
   "version": "1.0.0",
   "description": "Gulpを用いた開発環境のテンプレートです。",
   "main": "index.js",
