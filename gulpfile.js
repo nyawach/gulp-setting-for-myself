@@ -83,7 +83,7 @@ gulp.task('php', function(){
 });
 
 /* Sass(SCSS)ビルド */
-gulp.task('sass', ['css'], function() {
+gulp.task('sass', function() {
 	gulp.src(path.scssSrc)
 		.pipe(plugins.plumber())
 		// 差分ファイルのみ次のストリームに流す
@@ -152,7 +152,7 @@ gulp.task('imgmin', function(){
 gulp.task('default', ['server'], function() {
     gulp.watch([path.htmlTarget], ['html']);
     // gulp.watch([path.phpTarget], ['php']);
-    gulp.watch([path.scssTarget], ['sass']);
+    gulp.watch([path.scssTarget], ['sass', 'css']);
     gulp.watch([path.jsTarget], ['jsmin']);
     // gulp.watch([path.imageTarget], ['imgmin']);
 });
