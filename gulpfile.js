@@ -1,160 +1,191 @@
-
 var gulp = require('gulp'),
-
-	/*
-		プラグイン(gulp-load-pluginsでgulp関連のものは一括導入)
-		キャメルケースで各プラグインを実行できるようになる
-	*/
-	plugins = require('gulp-load-plugins')({ camelize: true }),
-	browserSync = require('browser-sync'),
-
-	/*
-		各種パス
-		docRoot  : プロジェクトのルート(いらない...?)
-		docDir   : browserSyncでサーバー立ち上げる際のルートディレクトリ
-		**Src    : リソースのパス
-		**Dest   : 出力先のパス
-		**Target : watch対象
-	*/
-	path = {
-		// 各種ローカルサーバー情報
-		docRoot    : './',
-		docDir     : 'build/',
-		port       : 3000,
-		proxy      : 'localhost/',
-		// html
-		htmlSrc    : 'assets/**/*.html',
-		htmlDest   : 'build/',
-		htmlTarget : 'assets/**/*.html',
-		// php
-		phpSrc     : 'assets/**/*.php',
-		phpDest    : 'build/',
-		phpTarget  : 'assets/**/*.php',
-		// Sass(scss)
-		scssSrc    : 'assets/scss/**.scss',
-		scssDest   : 'build/css',
-		scssTarget : 'assets/scss/**/*.scss',
-		// css
-		cssSrc    : 'build/css/*.css',
-		cssDest   : 'build/css',
-		cssTarget : 'build/css/*.css',
-		// javascript
-		jsSrc      : 'assets/js/script.js',
-		jsDest     : 'build/js',
-		jsTarget   : 'assets/js/**/*.js',
-		// images
-		imageSrc   : 'assets/images/**/*.+(png|jpg|gif|svg)',
-		imageDest  : 'build/images',
-		imageTarget: 'assets/images/**/*.+(png|jpg|gif|svg)'
-	};
+    browserSync = require('browser-sync'),
+    plugins = require('gulp-load-plugins')({ camelize: true });
 
 
-/* 簡易ローカルサーバーの立ち上げ */
-gulp.task('server', function() {
-	browserSync({
-		server: {
-			baseDir: path.docDir
-			// proxy  : path.proxy,
-			// port   : path.port
-		}
-	});
+/**
+* HTMLファイルの操作
+* - buildフォルダへコピー
+*/
+var html = {
+    src: './assets/html/*.html',
+    dest: './build/'
+};
+
+gulp.task('html', function () {
+    gulp.src(html.src)
+        .pipe(plugins.plumber())
+        .pipe(plugins.cached())
+        .pipe(gulp.dest(html.dest))
+        .pipe(browserSync.reload({ stream: true }));
 });
 
-/* HTMLの出力 */
-gulp.task('html', function(){
-	gulp.src(path.htmlSrc)
-		.pipe(plugins.plumber())
-		// 差分ファイルのみ次のストリームに流す
-		.pipe(plugins.changed(path.htmlDest))
-		// Validate .html file
-		.pipe(plugins.w3cjs())
-		.pipe(gulp.dest(path.htmlDest))
-		.pipe(browserSync.reload({stream:true}));
+
+/**
+* PHPファイルの操作
+* - buildフォルダへコピー
+*/
+var php = {
+    src: './assets/php/*.php',
+    dest: './build/'
+};
+
+gulp.task('php', function () {
+    gulp.src(php.src)
+        .pipe(plugins.plumber())
+        .pipe(plugins.cached())
+        .pipe(gulp.dest(php.dest))
+        .pipe(browserSync.reload({ stream: true }));
 });
 
-/* phpの出力 */
-gulp.task('php', function(){
-	gulp.src(path.phpSrc)
-		.pipe(plugins.plumber())
-		// 差分ファイルのみ次のストリームに流す
-		.pipe(plugins.changed(path.phpDest))
-		.pipe(gulp.dest(path.phpDest))
-		.pipe(browserSync.reload({stream:true}));
+
+/**
+* JavaScriptファイルの操作
+* - Uglify
+* - buildフォルダへコピー
+*/
+var js = {
+    src: './assets/js/**/*.js',
+    dest: './build/js/'
+};
+
+gulp.task('js', function(){
+    gulp.src(js.src)
+        .pipe(plugins.plumber())
+        .pipe(plugins.uglify({mangle: false}))
+        .pipe(gulp.dest(js.dest))
+        .pipe(browserSync.reload({ stream: true }));
 });
 
-/* Sass(SCSS)ビルド */
-gulp.task('sass', function() {
-	gulp.src(path.scssSrc)
-		.pipe(plugins.plumber())
-		// 差分ファイルのみ次のストリームに流す
-		.pipe(plugins.changed(path.scssDest))
-		// Compile .scss file
-		.pipe(plugins.sass())
-		// Output .css file
-		.pipe(gulp.dest(path.scssDest));
+
+/**
+* Sass(SCSS)ファイルの操作
+* - .scssファイルのコンパイル
+* - autoprefix, minify, Media Queryの結合など
+* - sourcemap対応
+* - .cssファイルをbuildフォルダへコピー
+*/
+var sass = {
+    src: './assets/scss/**/*.scss',
+    dest: './build/'
+};
+gulp.task('sass', function(){
+  return plugins.rubySass(sass.src, {
+        sourcemap: true,
+        style: 'expanded'
+    })
+    .on('error', function(err){
+        console.error('Error!', err.message);
+    })
+    .pipe(plugins.plumber())
+    .pipe(plugins.cached())
+    // autoprefixer, media-query packer, altenative rem font-size, etc.
+    .pipe(plugins.pleeease({
+        sass: true,
+        autoprefixer: {'browsers': ['last 2 versions']},
+        minifier: false,
+        mqpacker: true,
+        sourcemaps: true,
+        rem: false,
+    }))
+    .pipe(plugins.sourcemaps.write('./', {
+        includeContent: false,
+        sourceRoot: './'
+    }))
+    // Output .css file
+    .pipe(gulp.dest(sass.dest))
+    // Reload browser
+    .pipe(browserSync.reload({ stream: true }));
 });
 
-/* CSSの整形など */
-gulp.task('css', function(){
-	gulp.src(path.cssSrc)
-		.pipe(plugins.plumber())
-		// autoprefixer, media-query packer, altenative rem font-size, etc.
-	    .pipe(plugins.pleeease({
-	        autoprefixer: ['last 4 versions'],
-	        minifier: false,
-	        mqpacker: true,
-	        rem: true
-	    }))
-	    // Combine css properties
-		.pipe(plugins.csscomb())
-		// Linter
-		.pipe(plugins.csslint("csslintrc.json"))
-		.pipe(plugins.csslint.reporter())
-		// Minify
-		.pipe(plugins.cssmin())
-		// Output .css file
-		.pipe(gulp.dest(path.cssDest))
-		// Reload browser
-		.pipe(browserSync.reload({stream:true}))
-});
 
+/**
+* CSSファイルの評価
+* `gulp stats`
+*/
+var css = {
+    src: './build/*.css'
+};
 /* Style Stats でCSSの評価 */
 gulp.task('stats', function(){
-	gulp.src(path.cssTarget)
+    gulp.src('./build/*.css')
         .pipe(plugins.stylestats());
 });
 
-/* .jsファイルの圧縮 */
-gulp.task('jsmin', function(){
-	gulp.src(path.jsSrc)
-		.pipe(plugins.plumber())
-		// 差分ファイルのみ次のストリームに流す
-		.pipe(plugins.changed(path.jsDest))
-		//minify
-		.pipe(plugins.jsmin())
-		//出力ファイル先の指定
-		.pipe(gulp.dest(path.jsDest))
-		.pipe(browserSync.reload({stream:true}));
+
+/*
+* 画像ファイルの操作
+* - 圧縮
+* - buildフォルダへコピー
+*/
+var image = {
+    src: './assets/images/**/*.+(jpg|png|jpeg|svg)',
+    dest: './build/images/'
+};
+gulp.task('image', function(){
+  gulp.src(image.src)
+      .pipe(plugins.plumber())
+      .pipe(plugins.cached())
+      .pipe(plugins.imagemin())
+      .pipe(gulp.dest(image.dest))
+      .pipe(browserSync.reload({ stream: true }));
 });
 
-/* 画像ファイルの圧縮 */
-gulp.task('imgmin', function(){
-	gulp.src(path.imageSrc)
-		// 差分ファイルのみ次のストリームに流す
-		.pipe(plugins.changed(path.imageDest))
-		.pipe(plugins.imagemin({
-			optimizationLevel: 8
-		}))
-		.pipe(gulp.dest(path.imageDest));
+
+/**
+* WordPressサーバーで自動リロード
+*/
+gulp.task('wpserver', function(){
+  browserSync({
+    proxy: 'localhost/wordpress/',
+    notify: true,
+    port: 80
+  });
 });
 
-/* default(サーバー立ち上げて自動更新) */
-gulp.task('default', ['server'], function() {
-    gulp.watch([path.htmlTarget], ['html']);
-    // gulp.watch([path.phpTarget], ['php']);
-    gulp.watch([path.scssTarget], ['sass', 'css']);
-    gulp.watch([path.jsTarget], ['jsmin']);
-    // gulp.watch([path.imageTarget], ['imgmin']);
+
+/**
+* ローカルサーバーで自動リロード
+*/
+gulp.task('server', function(){
+  browserSync.init({
+    server: {
+      baseDir: './build/'
+    }
+  });
 });
 
+
+/**
+* defaultタスク
+* `gulp` or `gulp default`
+*/
+gulp.task('default', ['wpserver'], function(){
+    gulp.watch([html.src], ['html']);
+    gulp.watch([php.src], ['php']);
+    gulp.watch([sass.src], ['sass']);
+    gulp.watch([js.src], ['js']);
+    gulp.watch([image.src], ['image']);
+});
+
+gulp.task('watch', function(){
+    gulp.watch([html.src], ['html']);
+    gulp.watch([php.src], ['php']);
+    gulp.watch([sass.src], ['sass']);
+    gulp.watch([js.src], ['js']);
+    gulp.watch([image.src], ['image']);
+});
+
+
+/**
+* WordPress Serverタスク
+* `gulp wp`
+*/
+gulp.task('wp', ['wpserver'], function(){
+    gulp.watch([html.src], ['html']);
+    gulp.watch([php.src], ['php']);
+    gulp.watch([sass.src], ['sass']);
+    gulp.watch([js.src], ['js']);
+    gulp.watch([image.src], ['image']);
+});
 

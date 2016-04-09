@@ -1,2 +1,5 @@
-node_modules/
 _shared/
+_old/
+*.sublime-workspace
+node_modules/
+.sass-cache/
