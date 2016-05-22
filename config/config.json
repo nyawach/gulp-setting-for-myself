@@ -1,0 +1,26 @@
+{
+	"src": "src",
+	"dest": "public",
+	"pleeease": {
+		"autoplefixer": [],
+		"minifier": true,
+		"mqpacker": true,
+		"sass": true,
+        "sourcemaps": true,
+        "rem": false
+	},
+	"sass": {
+		"outputStyle": "nested"
+	},
+	"sourcemaps": {
+        "includeContent": false,
+        "sourceRoot": "./"
+    },
+    "imagemin": {
+	        "progressive": true,
+	        "interlaced": true,
+	        "verbose": true,
+	        "use": [ "pngquant({ quality: 65-80 })" ]
+	}
+
+}
