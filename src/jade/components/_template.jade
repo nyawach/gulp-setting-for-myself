@@ -58,10 +58,12 @@ html(lang="ja")
       link(rel="stylesheet", href="css/style.css")
 
   body
+
     block ContentBlock
+
     //- javascript
     block JavascriptBlock
+      //- inject:js
+      script(src="js/lib/jquery.js")
+      //- endinject
       script(src="js/script.js")
-
-
-

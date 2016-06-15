@@ -10,15 +10,15 @@ class WatchTask extends DefaultRegistry {
     const config = require('../config/config.json');
 
     // watch
-	gulp.task('watch', cb => {
+  	gulp.task('watch', cb => {
 
-		watch(`${config.src}/jade/**/*.jade`, gulp.series('jade', 'reload'));
-		watch(`${config.src}/scss/**/*.scss`, gulp.series('sass', 'reload'));
-		watch([`${config.src}/js/**/*.js`, `!${config.src}/js/lib/**/*.js`], gulp.series('js', 'reload'));
+  		watch([`${config.src}/jade/**/*.jade`, `${config.src}/jade/locals.json`], gulp.series('jade', 'reload'));
+  		watch(`${config.src}/scss/**/*.scss`, gulp.series('sass', 'reload'));
+  		watch([`${config.src}/js/**/*.js`], gulp.series('js', 'reload'));
 
-		cb();
+  		cb();
 
- 	});
+   	});
 
   }
 

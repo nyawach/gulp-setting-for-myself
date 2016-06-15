@@ -14,13 +14,13 @@ class ReactTask extends DefaultRegistry {
 
     gulp.task('browserify:react', () => {
 
-	  return browserify(`${config.src}/js/script.jsx`, {debug: true})
-	    .transform(babelify.configure({
-	      presets: ["es2015", "react"]
-	    }))
-        .bundle()
-        .pipe(source('script.js'))
-        .pipe(gulp.dest(`${config.dest}/js`));
+  	  return browserify(`${config.src}/js/script.js`, {debug: true})
+  	    .transform(babelify.configure({
+  	      presets: ["es2015", "react"]
+  	    }))
+          .bundle()
+          .pipe(source('script.js'))
+          .pipe(gulp.dest(`${config.dest}/js`));
 
     });
 

@@ -13,17 +13,9 @@ class BrowserifyTask extends DefaultRegistry {
 
     const config = require('../config/config.json');
 
-// js
-// gulp.task('copy-bower', () => {
-//     const config = readConfig(`${CONFIG}/copy-bower.json`);
-//     return gulp.src(config.src, {
-//         cwd: 'bower_components'
-//     }).pipe(gulp.dest(`${DEST}/js/lib`));
-// });
-
     gulp.task('browserify', () => {
         return browserify(`${config.src}/js/script.js`)
-            .transform(babelify)
+            .transform(babelify, { presets: ['es2015', 'react'] })
             .transform(debowerify)
             .bundle()
             .pipe(source('script.js'))

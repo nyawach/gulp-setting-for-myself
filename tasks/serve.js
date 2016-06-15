@@ -13,11 +13,7 @@ class ServeTask extends DefaultRegistry {
     // browser-syncの起動
     gulp.task('serve', cb => {
 
-        browserSync({
-            server: {
-                baseDir: config.dest,
-            }
-        });
+        browserSync(config.browserSync);
         cb();
 
     });

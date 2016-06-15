@@ -1,9 +1,9 @@
-/* Javascript Document */
-import Test from './test';
+'use strict';
 
-let me = new Test({
-	name: 'Himeno'
+// import $ from './lib/jquery';
+
+console.log(aaaa.data);
+
+$(function() {
+  alert('H');
 });
-
-console.log(`Welcome to underground, ${me.name}.`);
-

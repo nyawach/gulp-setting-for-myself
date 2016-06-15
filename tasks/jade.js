@@ -13,11 +13,11 @@ class JadeTask extends DefaultRegistry {
     gulp.task('jade', callback => {
 
       return gulp.src([`${config.src}/jade/**/*.jade`, `!${config.src}/jade/**/components/*.jade`])
-          .pipe(jade({
-            locals: locals,
-            pretty: true
-          }))
-          .pipe(gulp.dest(`${config.dest}/`));
+        .pipe(jade({
+          locals: locals,
+          pretty: true
+        }))
+        .pipe(gulp.dest(`${config.dest}/`));
 
     });
 

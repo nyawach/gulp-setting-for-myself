@@ -2,6 +2,7 @@ import gulp from 'gulp';
 import DefaultRegistry from 'undertaker-registry';
 
 import imagemin from 'gulp-imagemin';
+import rename from 'gulp-rename';
 import pngquant from 'imagemin-pngquant';
 
 class ImageTask extends DefaultRegistry {
@@ -10,18 +11,15 @@ class ImageTask extends DefaultRegistry {
 
     const config = require('../config/config.json');
 
-    // image copy
-	gulp.task('copy-image', () => {
-	    return gulp.src(`${config.src}/images/**/*`)
-	        .pipe(gulp.dest(`${config.dest}/images`));
-	});
-
-	// imagemin
-	gulp.task('imagemin', () => {
-	    return gulp.src(`${config.src}/images/**/*`)
-	        .pipe(imagemin(config.imagemin))
-	        .pipe(gulp.dest(`${config.dest}/images`));
-	});
+    // imagemin
+    gulp.task('imagemin', () => {
+        return gulp.src(`${config.src}/images/**/*.{png,jpg,jpeg,gif}`)
+          .pipe(imagemin(config.imagemin))
+          .pipe(rename(function(path){
+            path.dirname += '/images';
+          }))
+          .pipe(gulp.dest(`${config.dest}`));
+  	});
 
 
 

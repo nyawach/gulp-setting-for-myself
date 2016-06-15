@@ -1,67 +1,83 @@
-# Gulp Template for myself
+# README
 
-Gulp.jsによる開発環境のテンプレートです。  
-gulpで行っている内容は主に以下の内容です。
+package.jsonに以下を追加
 
-
-## Tools
-
-- Javascript minify (gulp-jsmin)
-- SASS(SCSS) compile &amp; CSS minify (gulp-sass, gulp-cssmin, gulp-pleeease)
-- HTML Validate (gulp-w3cjs)
-- CSS Lint (gulp-csslint)
-- Image minify (gulp-imagemin)
-- Browser Reload (\*.html, \*.php, \*.scss, \*.js, ..., browser-sync)
-- StyleStats (`gulp stats`)
-
-
-## How to use
-
-- `cd path/to/dir`
-- `npm install -g browser-sync`
-- `npm install`
-- `gulp`
-
-### `gulp`
-
-- ブラウザ起動
-- 各ファイルの更新を監視
-- 更新されたファイルのみにタスク処理
-
-### `gulp stats`
-
-- CSSの評価
-
-
-## Directory
-
-```text
-root/
-  ┣ _shared/          // 各種資料を入れとく場所。ignore対象
-  ┣　assets/           // 作業ディレクトリ
-  ┃   ┣ js/           // js用フォルダ
-  ┃   ┣ images/       // 画像用フォルダ
-  ┃   ┣ scss/         // .scssファイル。以下は[FLOCSS](https://github.com/hiloki/flocss)を参考にさせていただいてます。
-  ┃   ┃   ┣ base/     // normalize, reset, senitize etc.
-  ┃   ┃   ┣ object/   // utility, layout(page), components etc.
-  ┃   ┃   ┗ style.scss // import & コンパイル用ファイル。分けない場合はここに直接かいたりしてます。
-  ┃   ┗ index.html
-  ┣ build/            // 出力先のディレクトリ
-  ┃   ┣ js/
-  ┃   ┣ images/
-  ┃   ┣ css/
-  ┃   ┗ index.html
-  ┣ node_modules/    // ignore対象
-  ┣ .gitignore       // ./_sharedと./node_modulesを無視
-  ┣ gulpfile.js      // Gulpの自動化処理を書いているファイル。
-  ┣ package.json     // 各種パッケージのインストール情報、プロジェクトの情報が書かれたファイル。
-  ┣ csslintrc.json   // CSSLinterの設定ファイル
-  ┗ readme.md        // このファイル。
-
+```json
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  }
 ```
 
 
-## Dependencies
+// taskの読み込み
 
-`npm install -g node-sass`をターミナル(コマンドプロンプト)で実行し、node-sassをインストールする必要があるかもしれないです。  
-また、gulp-sassは、SASS3.3には2015/5/6現在では対応していないようなので、3.3を使用したい場合は`gulp-ruby-sass`などを用いたほうが良いと思います。
+
+// taskの処理順番を書く
+// watch, default, build, serveはこのファイルに書いて、他のは別ファイルで書く?
+
+// gulp.task('css:build', gulp.series('sass', 'lint:css', 'minify:css'));
+// gulp.task('js:build', gulp.pallarel('copy-bower', gulp.series('browserify', 'lint:js', 'minify:js')));
+// gulp.task('html:build', gulp.series('jade', 'minify:html'));
+
+
+// defaultとbuildを書く
+// gulp.task('default', gulp.series('serve', 'watch'));
+// gulp.task('build', gulp.series('serve', gulp.pallarel('html:build', 'css:build', 'js:build', 'imagemin')));
+
+
+
+基本的にこのファイルには
+- 開発用のdefaultタスク
+- 公開用のbuildタスク
+の２つだけ設定する。
+`npm start` => `gulp`
+`npm run build` => `gulp build`
+`npm run taskName` => `gulp taskName`
+となるようにpackage.jsonの`script`に追加記述する
+こうすれば`browserify:react`などのタスクも別ファイルで作ってここでタスク追加すればいいので便利なきがす
+
+
+
+## タスクいるもの
+
+
+### HTML
+
+- jade compile
+- html validate
+- html minify
+
+
+### CSS
+
+- sass compile
+- sourcemap(devのみ)
+- pleeease
+- css linter
+- minify(buildのみ)
+- frontnote(できれば)
+
+
+### JS
+
+- browserify
+- js linter
+- minify(buildのみ)
+- Docblockr(できれば)
+
+
+### 画像
+
+- minify(buildのみ)
+- copy(devの時のみ)
+- スプライト画像の作成(フォルダfunctionでいいかも)
+
+
+### その他
+
+- browser-sync(devのみ)
+- watch or watchfy(devのみ)
+- plumber(devのみ)
+- koko(buildのみ)
