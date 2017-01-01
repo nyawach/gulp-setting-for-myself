@@ -1,1 +1,3 @@
-console.log('aaaa.data');
+import $ from "jquery";
+
+console.log("hello!");

@@ -1,0 +1,33 @@
+src: "src"
+
+dest: "public"
+
+pleeease:
+  autoprefixer:
+    browsers:
+      - "ie >= 10"
+      - "ie_mob >= 10"
+      - "ff >= 30"
+      - "chrome >= 34"
+      - "safari >= 7"
+      - "opera >= 23"
+      - "ios >= 8"
+      - "android >= 4.4"
+      - "bb >= 10"
+  minifier: true
+  mqpacker: true
+  sass: true
+
+sass:
+  outputStyle: "nested"
+
+imagemin:
+  progressive: true
+  interlaced: true
+  verbose: true
+  use:
+    - "pngquant({ quality: 65-80 })"
+
+browserSync:
+  server:
+    baseDir: "public"

@@ -1,83 +1,107 @@
-# README
+# gulp-setting-for-myself
 
-package.jsonに以下を追加
 
-```json
-  "babel": {
-    "presets": [
-      "es2015"
-    ]
-  }
+
+## install
+
+```bash
+yarn
 ```
 
 
-// taskの読み込み
+## start
 
-
-// taskの処理順番を書く
-// watch, default, build, serveはこのファイルに書いて、他のは別ファイルで書く?
-
-// gulp.task('css:build', gulp.series('sass', 'lint:css', 'minify:css'));
-// gulp.task('js:build', gulp.pallarel('copy-bower', gulp.series('browserify', 'lint:js', 'minify:js')));
-// gulp.task('html:build', gulp.series('jade', 'minify:html'));
-
-
-// defaultとbuildを書く
-// gulp.task('default', gulp.series('serve', 'watch'));
-// gulp.task('build', gulp.series('serve', gulp.pallarel('html:build', 'css:build', 'js:build', 'imagemin')));
+```bash
+yarn start
+```
 
 
 
-基本的にこのファイルには
-- 開発用のdefaultタスク
-- 公開用のbuildタスク
-の２つだけ設定する。
-`npm start` => `gulp`
-`npm run build` => `gulp build`
-`npm run taskName` => `gulp taskName`
-となるようにpackage.jsonの`script`に追加記述する
-こうすれば`browserify:react`などのタスクも別ファイルで作ってここでタスク追加すればいいので便利なきがす
+## Task Tree
+
+```bash
+$ gulp -T
+├─┬ default
+│ └─┬ <series>
+│   ├─┬ <parallel>
+│   │ ├─┬ html
+│   │ │ └─┬ <series>
+│   │ │   └── pug
+│   │ ├─┬ css
+│   │ │ └─┬ <series>
+│   │ │   └── sass
+│   │ └─┬ js
+│   │   └─┬ <series>
+│   │     └── browserify
+│   ├── serve
+│   └─┬ <parallel>
+│     └── watch
+├─┬ css
+│ └─┬ <series>
+│   └── sass
+├─┬ html
+│ └─┬ <series>
+│   └── pug
+├─┬ js
+│ └─┬ <series>
+│   └── browserify
+├── image
+├── browserify
+├── pug
+├── reload
+├── sass
+├── serve
+└── watch
+```
 
 
 
-## タスクいるもの
+## ディレクトリ構造
+
+画像・CSS・JSごとにフォルダを分けています。
+
+```bash
+├── public/
+│   ├── about/
+│   │   └── index.html
+│   ├── css/
+│   │   └── style.css
+│   ├── index.html
+│   └── js/
+│       └── script.js
+├── src/
+│   ├── images/
+│   ├── js/
+│   │   ├── about/
+│   │   │   └── script.js
+│   │   ├── lib/
+│   │   └── script.js
+│   ├── pug/
+│   │   ├── about/
+│   │   ├── index.pug
+│   │   ├── locals.yml
+│   │   └── module/
+│   └── scss/
+│       ├── about/
+│       ├── base/
+│       ├── object/
+│       └── style.scss
+├── config/
+│   └── config.yml
+├── tasks/
+├── gulpfile.babel.js
+├── package.json
+└── yarn.lock
+├── readme.md
+```
 
 
-### HTML
+## DevDependencies
 
-- jade compile
-- html validate
-- html minify
+`package.json`参照
 
 
-### CSS
 
-- sass compile
-- sourcemap(devのみ)
-- pleeease
-- css linter
-- minify(buildのみ)
-- frontnote(できれば)
+## Dependencies
 
-
-### JS
-
-- browserify
-- js linter
-- minify(buildのみ)
-- Docblockr(できれば)
-
-
-### 画像
-
-- minify(buildのみ)
-- copy(devの時のみ)
-- スプライト画像の作成(フォルダfunctionでいいかも)
-
-
-### その他
-
-- browser-sync(devのみ)
-- watch or watchfy(devのみ)
-- plumber(devのみ)
-- koko(buildのみ)
+- jquery: ^3.1.1

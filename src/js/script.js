@@ -1,9 +1,5 @@
-'use strict';
+import $ from "jquery";
+import Test from "./lib/Test";
 
-// import $ from './lib/jquery';
-
-console.log(aaaa.data);
-
-$(function() {
-  alert('H');
-});
+const test = new Test();
+test.hello();

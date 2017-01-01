@@ -1,38 +1,23 @@
 import gulp from 'gulp';
 import DefaultRegistry from 'undertaker-registry';
+import readConfig from 'read-config';
 
 import browserSync from 'browser-sync';
-
 
 class ServeTask extends DefaultRegistry {
 
   init() {
 
-    const config = require('../config/config.json');
+    const config = readConfig('./config/config.yml');
 
-    // browser-syncの起動
-    gulp.task('serve', cb => {
-
-        browserSync(config.browserSync);
-        cb();
-
+    gulp.task('serve', done => {
+      browserSync(config.browserSync);
+      done();
     });
 
-    // リロード
-    gulp.task('reload', cb => {
-
-        browserSync.reload();
-        cb();
-
-    });
-
-    // WordPress用
-    gulp.task('wpserver', function(){
-      browserSync({
-        proxy: 'localhost/wordpress/',
-        notify: true,
-        port: 80
-      });
+    gulp.task('reload', done => {
+      browserSync.reload();
+      done();
     });
 
   }
